@@ -17,8 +17,10 @@
         "zprint-clj": "~0.8.0"
     },
     "dependencies": {
+        "@daily-co/daily-js": "^0.14.0",
         "highlight.js": "10.7.1",
         "react": "~17.0.1",
+        "react-bootstrap": "^1.6.0",
         "react-dom": "~17.0.1"
     }
 }

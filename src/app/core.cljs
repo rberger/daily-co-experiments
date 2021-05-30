@@ -3,7 +3,8 @@
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
             [refn.core :as rf :refer [<< >>]] ;; Using refn wrapper for re-frame
-            [app.hello :refer [hello]]))
+            [app.hello :refer [hello]]
+            [app.call :refer [call]]))
 
 (def default-db
   {:rf-count 0})
@@ -11,7 +12,7 @@
 (defn ^:dev/after-load render
   "Render the toplevel component for this app."
   []
-  (rd/render [hello] (.getElementById js/document "app")))
+  (rd/render [call] (.getElementById js/document "app")))
 
 (defn ^:export main
   "Run application startup logic."

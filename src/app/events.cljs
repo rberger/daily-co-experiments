@@ -7,3 +7,4 @@
 
 (reg-event-db :rf-count (assoc-db :rf-count))
 
+(reg-event-db :room-url (assoc-db :room-url))
