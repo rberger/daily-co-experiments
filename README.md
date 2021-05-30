@@ -1,7 +1,6 @@
-## Template for Clojurescript Reframe / Reagent App
+## Exerpiments with Daily.co Video service in clojure[script]
 
-You can use this template this as a starting point for re-frame / reagent
-applications
+Initial experiments with the prebuild-ui
 
 ## Available Scripts
 
@@ -66,6 +65,3 @@ Released under MIT License
 
 Copyright 2021 Robert Berger and Omnyway Inc.
 
-## Thanks To
-
-Filipe Silva (filipesilva) for [create-cljs-app](https://github.com/filipesilva/create-cljs-app) which this started from
