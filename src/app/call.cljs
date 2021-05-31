@@ -5,7 +5,17 @@
    [app.subs :as subs]
    [app.events :as events]
    [app.daily-co :as d]
-   ["react-bootstrap" :refer [Container Row Col Form Button Form.Control Form.Group Form.Label Form.Text ResponsiveEmbed]]))
+   ["react-bootstrap" :refer [Container
+                              Row
+                              Col
+                              Button
+                              Form
+                              Form.Control
+                              Form.Row
+                              Form.Group
+                              Form.Label
+                              Form.Text
+                              ResponsiveEmbed]]))
 
 
 (defn call []
@@ -24,36 +34,35 @@
           result))
       [:<>
        [:> Container {:fluid true }
-        [:> Row {:style {:height "75vh"}}
-         [:> Col 
-          {:id "call-wrapper"
-           :ref (fn [el]
-                  (reset! call-wrapper-ref el))}]]
-        [:> Row
+        [:> Row {:style {:height "100vh"}}
+         [:> Col {:sm 9
+                  :id "call-wrapper"
+                  :ref (fn [el]
+                         (reset! call-wrapper-ref el))}]
          [:> Col
           [:> Form
-           [:> Form.Group {:controlId "room-url"}]
-           [:> Form.Text (str "Current Room url: " (<< [:room-url]))]
-           [:> Form.Label "Room URL"]
-           [:> Form.Control {:onChange (fn [e]
-                                         (let [value (-> e .-target .-value)]
-                                           (js/console.log "form onchange room-url: ", value)
-                                           (>> [:room-url value])))}]]
-          ]]
-        [:> Row
-         [:> Col
-          [:> Button {:id "start-button"
-                      :on-click (fn [e]
-                                  (js/console.log "Start On-click e: ", e)
-                                  (when (and @call-wrapper-ref @d/call-frame )
-                                    (d/join-room (<< [:room-url])))
-                                  )} "Start Call"]]
-         [:> Col
-          [:> Button {:id "stop-button"
-                      :on-click (fn [e]
-                                  (js/console.log "Reset On-click e: ", e)
-                                  (js/console.log "call-wrapper-ref: ", @call-wrapper-ref, " call-frame: ", @d/call-frame)
-                                  (when (and @call-wrapper-ref @d/call-frame )
-                                    (d/leave))
-                                  )} "Reset Call"]]]
-        ]])))
+           [:> Form.Row
+            [:> Form.Group {:controlId "room-url"}]
+            [:> Form.Text (str "Current Room url: " (<< [:room-url]))]
+            [:> Form.Label "Room URL"]
+            [:> Form.Control {:onChange (fn [e]
+                                          (let [value (-> e .-target .-value)]
+                                            (js/console.log "form onchange room-url: ", value)
+                                            (>> [:room-url value])))}]]]]
+         [:> Row
+          [:> Col
+           [:> Button {:id "start-button"
+                       :on-click (fn [e]
+                                   (js/console.log "Start On-click e: ", e)
+                                   (when (and @call-wrapper-ref @d/call-frame )
+                                     (d/join-room (<< [:room-url])))
+                                   )} "Start Call"]]
+          [:> Col
+           [:> Button {:id "stop-button"
+                       :on-click (fn [e]
+                                   (js/console.log "Reset On-click e: ", e)
+                                   (js/console.log "call-wrapper-ref: ", @call-wrapper-ref, " call-frame: ", @d/call-frame)
+                                   (when (and @call-wrapper-ref @d/call-frame )
+                                     (d/leave))
+                                   )} "Reset Call"]]]]]]
+      )))
