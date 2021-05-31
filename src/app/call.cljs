@@ -5,7 +5,7 @@
    [app.subs :as subs]
    [app.events :as events]
    [app.daily-co :as d]
-   ["react-bootstrap" :refer [Container Row Col Form Button Form.Control Form.Group Form.Label Form.Text]]))
+   ["react-bootstrap" :refer [Container Row Col Form Button Form.Control Form.Group Form.Label Form.Text ResponsiveEmbed]]))
 
 
 (defn call []
@@ -23,11 +23,12 @@
           (js/console.log "RESULT: ", result)
           result))
       [:<>
-       [:> Container
-        [:> Row
-         [:> Col {:id "call-wrapper"
-                  :ref (fn [el]
-                         (reset! call-wrapper-ref el))}]]
+       [:> Container {:fluid true }
+        [:> Row {:style {:height "75vh"}}
+         [:> Col 
+          {:id "call-wrapper"
+           :ref (fn [el]
+                  (reset! call-wrapper-ref el))}]]
         [:> Row
          [:> Col
           [:> Form
@@ -41,11 +42,18 @@
           ]]
         [:> Row
          [:> Col
-          [:> Button {:id "join-button"
+          [:> Button {:id "start-button"
                       :on-click (fn [e]
-                                  (js/console.log "Jon On-click e: ", e)
-                                  (js/console.log "call-wrapper-ref: ", @call-wrapper-ref, " call-frame: ", @d/call-frame)
+                                  (js/console.log "Start On-click e: ", e)
                                   (when (and @call-wrapper-ref @d/call-frame )
                                     (d/join-room (<< [:room-url])))
-                                  )} "Join Call"]]]
+                                  )} "Start Call"]]
+         [:> Col
+          [:> Button {:id "stop-button"
+                      :on-click (fn [e]
+                                  (js/console.log "Reset On-click e: ", e)
+                                  (js/console.log "call-wrapper-ref: ", @call-wrapper-ref, " call-frame: ", @d/call-frame)
+                                  (when (and @call-wrapper-ref @d/call-frame )
+                                    (d/leave))
+                                  )} "Reset Call"]]]
         ]])))

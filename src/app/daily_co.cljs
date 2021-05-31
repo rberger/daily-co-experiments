@@ -15,8 +15,11 @@
                                               left-meeting]}]
 
   (js/console.log "Top create-call-frame call-wrapper: " call-wrapper)
-  (.createFrame DailyIframe  call-wrapper)
-  )
+  (reset! call-frame (.createFrame DailyIframe  call-wrapper
+                                   #js {:showLeaveButton true
+                                        :showFullscreenButton true
+                                        }
+                                   )))
 ;; (->
 ;;  (.createFrame DailyIframe  call-wrapper)
 ;;  (.then (fn [callFrame]
@@ -39,6 +42,14 @@
     (catch
         js/Object e (.error js/console e))))
 
+(defn leave
+  "Leaves the meeting. If there is no meeting, this method does nothing."
+  []
+  (js/console.log "LEAVE @call-frame: " @call-frame)
+  (try
+    (.leave ^js/DailyIframe.callFrame @call-frame)
+    (catch
+        js/Object e (.error js/console e))))
 ;;
 ;; Event listener callbacks and helpers
 ;;
