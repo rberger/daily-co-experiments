@@ -1,6 +1,7 @@
 (ns app.daily-co
   (:require
-   ["@daily-co/daily-js/dist/daily-iframe-esm.js" :default DailyIframe])
+   ;;   ["@daily-co/daily-js/dist/daily-iframe-esm.js" :default DailyIframe])
+   ["@daily-co/daily-js" :default DailyIframe])
   )
 
 (js/console.log "DailyIframe: " DailyIframe)

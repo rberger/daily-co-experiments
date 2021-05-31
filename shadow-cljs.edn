@@ -5,6 +5,9 @@
            :output-dir "resources/public/js/compiled"
            :asset-path "/js/compiled"
            :modules    {:main {:init-fn app.core/main}}
+           :js-options
+           {:resolve {"@daily-co/daily-js" {:target :npm
+                                            :require "@daily-co/daily-js/dist/daily-iframe-esm.js"}}}
            :compiler-options
            {:output-feature-set :es6
             :closure-defines {re-frame.trace.trace_enabled? true
