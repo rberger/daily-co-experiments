@@ -32,32 +32,49 @@
                                                              :left-meeting d/handle-left-meeting})]
           (js/console.log "RESULT: ", result)
           result))
-      [:<>
-       [:> Container {:fluid true }
-        [:> Row {:style {:height "100vh"}}
-         [:> Col {:sm 9
-                  :id "call-wrapper"
-                  :ref (fn [el]
-                         (reset! call-wrapper-ref el))}]
-         [:> Col
-          [:> Form
-           [:> Form.Row
-            [:> Form.Group {:controlId "room-url"}]
-            [:> Form.Text (str "Current Room url: " (<< [:room-url]))]
-            [:> Form.Label "Room URL"]
-            [:> Form.Control {:onChange (fn [e]
+      [:> Container {:fluid true }
+       [:> Row {:style {:height "100vh"}}
+        [:> Col {:id "call-wrapper"
+                 :sm 8
+                 :ref (fn [el]
+                        (reset! call-wrapper-ref el))}]
+        [:> Col {:id "controls-col"}
+         [:hr]
+         [:h1 "Call Overview"]
+         [:hr]
+         [:> Form
+          [:> Form.Group {:as Row
+                          :controlId "room-url"}
+           [:> Col {:sm 3}
+            [:> Form.Label "Room URL"]]
+           [:> Col 
+            [:> Form.Control {:defaultValue (<< [:room-url])
+                              :onChange (fn [e]
                                           (let [value (-> e .-target .-value)]
                                             (js/console.log "form onchange room-url: ", value)
-                                            (>> [:room-url value])))}]]]]
+                                            (>> [:room-url value])))}]]]
+
+          [:> Form.Group {:as Row
+                          :controlId "meeting-token"}
+           [:> Col {:sm 3}
+            [:> Form.Label "Meeting Token"]]
+           [:> Col
+            [:> Form.Control {:as "textarea"
+                              :defaultValue (<< [:meeting-token])
+                              :onChange (fn [e]
+                                          (let [value (-> e .-target .-value)]
+                                            (js/console.log "form onchange meeting-token: ", value)
+                                            (>> [:meeting-token value])))}]]]]
          [:> Row
-          [:> Col
+          [:> Col {:sm 3}
            [:> Button {:id "start-button"
                        :on-click (fn [e]
                                    (js/console.log "Start On-click e: ", e)
                                    (when (and @call-wrapper-ref @d/call-frame )
-                                     (d/join-room (<< [:room-url])))
+                                     (d/join-room {:room-url (<< [:room-url])
+                                                   :meeting-token (<< [:meeting-token])}))
                                    )} "Start Call"]]
-          [:> Col
+          [:> Col {:sm 3}
            [:> Button {:id "stop-button"
                        :on-click (fn [e]
                                    (js/console.log "Reset On-click e: ", e)

@@ -36,12 +36,17 @@
 (defn join-room
   "Join the room using the supplied room url
   `room-url` - daily.co room url"
-  [room-url]
-  (try
-    (.join @call-frame #js {:url room-url
-                            :showLeaveButton true})
-    (catch
-        js/Object e (.error js/console e))))
+  [{:keys [room-url meeting-token]}]
+  (let [base-props {:url room-url
+                    :showLeaveButton true}
+        props (if meeting-token
+                (merge base-props {:token meeting-token})
+                base-props)]
+    (js/console.log ::join-room props)
+    (try
+      (.join @call-frame (clj->js props))
+      (catch
+          js/Object e (.error js/console e)))))
 
 (defn leave
   "Leaves the meeting. If there is no meeting, this method does nothing."

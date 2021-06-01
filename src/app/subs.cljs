@@ -7,3 +7,5 @@
 
 (defsub :room-url)
 
+(defsub :meeting-token)
+
