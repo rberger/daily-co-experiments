@@ -8,7 +8,8 @@
 ;; (js/console.log "createFrame: " createFrame)
 (defonce call-frame (atom nil))
 
-(defn create-call-frame [call-wrapper {:keys [loaded
+(defn create-call-frame [call-wrapper {:keys [show-event
+                                              loaded
                                               started-camera
                                               camera-error
                                               joining-meeting
@@ -16,11 +17,32 @@
                                               left-meeting]}]
 
   (js/console.log "Top create-call-frame call-wrapper: " call-wrapper)
-  (reset! call-frame (.createFrame DailyIframe  call-wrapper
-                                   #js {:showLeaveButton true
-                                        :showFullscreenButton true
-                                        }
-                                   )))
+  (let [cframe (.createFrame DailyIframe  call-wrapper
+                             #js {:showLeaveButton true
+                                  :showFullscreenButton true
+                                  })]
+    (reset! call-frame cframe)
+    (->
+     cframe
+     (.on "loaded" loaded)
+     (.on "started-camera" started-camera)
+     (.on "camera-error" camera-error)
+     (.on "joining-meeting" joining-meeting)
+     (.on "joined-meeting" joined-meeting)
+     (.on "left-meeting" left-meeting)
+     (.on "loading", show-event)
+     (.on "participant-joined", show-event)
+     (.on "participant-updated", show-event)
+     (.on "participant-left", show-event)
+     (.on "recording-started", show-event)
+     (.on "recording-stopped", show-event)
+     (.on "recording-stats", show-event)
+     (.on "recording-error", show-event)
+     (.on "recording-upload-completed", show-event)
+     (.on "app-message", show-event)
+     (.on "input-event", show-event)
+     (.on "error", show-event)
+     )))
 ;; (->
 ;;  (.createFrame DailyIframe  call-wrapper)
 ;;  (.then (fn [callFrame]
@@ -51,17 +73,22 @@
 (defn leave
   "Leaves the meeting. If there is no meeting, this method does nothing."
   []
-  (js/console.log "LEAVE @call-frame: " @call-frame)
+  (js/console.log "LEAVE @call-frame: " (boolean @call-frame))
   (try
-    (.leave ^js/DailyIframe.callFrame @call-frame)
+    (when @call-frame
+      (.leave ^js/DailyIframe.callFrame @call-frame)
+      (.destroy ^js/DailyIframe.callFrame @call-frame))
+    (reset! call-frame nil)
     (catch
-        js/Object e (.error js/console e))))
+        js/Object e (.error js/console "LEAVE CATCH e: " e))))
+
+(defn start-live-streaming [rtmp-full-url]
+  (.startLiveStreaming ^js/DailyIframe.callFrame @call-frame rtmp-full-url))
+
+(defn stop-live-streaming []
+  (.startLiveStreaming ^js/DailyIframe.callFrame @call-frame))
 ;;
 ;; Event listener callbacks and helpers
 ;;
 
-(defn show-event [e] (.log js/console "callFrame show event" e))
-(defn toggle-lobby [e] (.log js/console "callFrame toggle-lobby event" e))
-(defn handle-joined-meeting [e] (.log js/console "callFrame handle-joined-meeting event" e))
-(defn handle-left-meeting [e] (.log js/console "callFrame handle-left-meeting event" e))
 

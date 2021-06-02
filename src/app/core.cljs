@@ -7,7 +7,8 @@
             [app.call :refer [call]]))
 
 (def default-db
-  {:room-url "https://visx.daily.co/robtest000"})
+  {:room-url "https://visx.daily.co/robtest000"
+   :reset-count 0})
 
 (defn ^:dev/after-load render
   "Render the toplevel component for this app."
