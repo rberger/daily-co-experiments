@@ -24,7 +24,7 @@
                  (str ": action: " (:action (js->clj event :keywordize-keys true)))
                  "")
         event-description (str (str/capitalize (name event-type)) action)]
-    (js/console.log "STATUS: " event-description)
+    (js/console.log event-type " event: " event)
     (>> [:status-description event-description])))
 
 (defn show-event [e] (status-update :show-event e))
@@ -36,9 +36,9 @@
   (let [call-wrapper-ref (atom nil)]
     (fn []
       (let [call-ready (and @call-wrapper-ref @d/call-frame )]
-        (js/console.log "Top of call  @call-wrapper-ref: ", @call-wrapper-ref " call-frame: ", @d/call-frame)
+        ;; (js/console.log "Top of call  @call-wrapper-ref: ", @call-wrapper-ref " call-frame: ", @d/call-frame)
         (when (and @call-wrapper-ref (not @d/call-frame))
-          (js/console.log "calling create-call-frame @call-wrapper-ref: ", @call-wrapper-ref " call-frame: ", @d/call-frame)
+          ;; (js/console.log "calling create-call-frame @call-wrapper-ref: ", @call-wrapper-ref " call-frame: ", @d/call-frame)
           (let [result (d/create-call-frame @call-wrapper-ref {:show-event show-event
                                                                :loaded show-event
                                                                :started-camera show-event
@@ -71,7 +71,7 @@
               [:> Form.Control {:defaultValue (<< [:room-url])
                                 :onChange (fn [e]
                                             (let [value (-> e .-target .-value)]
-                                              (js/console.log "form onchange room-url: ", value)
+                                              ;; (js/console.log "form onchange room-url: ", value)
                                               (>> [:room-url value])))}]]]
 
             [:> Form.Group {:as Row
@@ -83,7 +83,7 @@
                                 :defaultValue (<< [:meeting-token])
                                 :onChange (fn [e]
                                             (let [value (-> e .-target .-value)]
-                                              (js/console.log "form onchange meeting-token: ", value)
+                                              ;; (js/console.log "form onchange meeting-token: ", value)
                                               (>> [:meeting-token value])))}]]]
 
             [:> Form.Group {:as Row
@@ -94,7 +94,7 @@
               [:> Form.Control {:defaultValue (<< [:rtmp-url])
                                 :onChange (fn [e]
                                             (let [value (-> e .-target .-value)]
-                                              (js/console.log "form onchange rtmp-url: ", value)
+                                              ;; (js/console.log "form onchange rtmp-url: ", value)
                                               (>> [:rtmp-url value])))}]]]
             [:> Form.Group {:as Row
                             :controlId "rtmp-session-key"}
@@ -104,26 +104,36 @@
               [:> Form.Control {:defaultValue (<< [:rtmp-session-key])
                                 :onChange (fn [e]
                                             (let [value (-> e .-target .-value)]
-                                              (js/console.log "form onchange rtmp-session-key: ", value)
+                                              ;; (js/console.log "form onchange rtmp-session-key: ", value)
                                               (>> [:rtmp-session-key value])))}]]]]
 
            [:> Row
-            [:> Col {:sm 3}
+            [:> Col {:sm "auto"}
              [:> Button {:id "start-button"
+                         :disabled (empty? (<< [:room-url]))
                          :on-click (fn [e]
-                                     (when (and @call-wrapper-ref @d/call-frame )
-                                       (d/join-room {:room-url (<< [:room-url])
-                                                     :meeting-tokeng (<< [:meeting-token])}))
+                                     (d/join-room {:room-url (<< [:room-url])
+                                                   :meeting-token (<< [:meeting-token])})
                                      )} "Start Call"]]
-            [:> Col {:sm 3}
+            [:> Col {:sm "auto"}
+             ;; (js/console.log "rtmp-full-url: " (<< [:rtmp-full-url]))
              [:> Button {:id "start-streaming"
+                         :variant "success"
+                         :disabled (not (and call-ready (<< [:rtmp-full-url])))
                          :on-click (fn [e]
-                                     (when (and @call-wrapper-ref @d/call-frame )
-                                       (d/join-room {:room-url (<< [:room-url])
-                                                     :meeting-tokeng (<< [:meeting-token])}))
-                                     )} "Start Call"]]
-            [:> Col {:sm 3}
+                                     (d/start-live-streaming (<< [:rtmp-full-url])))}
+              "Start Stream"]]
+
+            [:> Col {:sm "auto"}
+             [:> Button {:id "stop-streaming"
+                         :variant "warning"
+                         :on-click (fn [e]
+                                     (d/stop-live-streaming))}
+              "Stop Stream"]]
+
+            [:> Col {:sm "auto"}
              [:> Button {:id "reset-button"
+                         :variant "warning"
                          :on-click (fn [e]
                                      (d/leave)
                                      (status-update :reset nil)

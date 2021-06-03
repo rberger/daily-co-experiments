@@ -7,7 +7,10 @@
             [app.call :refer [call]]))
 
 (def default-db
-  {:room-url "https://visx.daily.co/robtest000"
+  {:room-url nil
+   :rtmp-url nil
+   :rtmp-session-key nil
+   :meeting-token nil
    :reset-count 0})
 
 (defn ^:dev/after-load render

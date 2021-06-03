@@ -42,6 +42,9 @@
      (.on "app-message", show-event)
      (.on "input-event", show-event)
      (.on "error", show-event)
+     (.on "live-streaming-error", show-event)
+     (.on "live-streaming-started", show-event)
+     (.on "live-streaming-stopped", show-event);
      )))
 ;; (->
 ;;  (.createFrame DailyIframe  call-wrapper)
@@ -59,21 +62,21 @@
   "Join the room using the supplied room url
   `room-url` - daily.co room url"
   [{:keys [room-url meeting-token]}]
+  (js/console.log "JOIN-ROOM room-url: " room-url " meeting-token: " meeting-token)
   (let [base-props {:url room-url
                     :showLeaveButton true}
         props (if meeting-token
                 (merge base-props {:token meeting-token})
                 base-props)]
-    (js/console.log ::join-room props)
+    (js/console.log "!!!!!"::join-room (clj->js props))
     (try
-      (.join @call-frame (clj->js props))
+      (.join ^js/DailyIframe.callFrame @call-frame (clj->js props))
       (catch
           js/Object e (.error js/console e)))))
 
 (defn leave
   "Leaves the meeting. If there is no meeting, this method does nothing."
   []
-  (js/console.log "LEAVE @call-frame: " (boolean @call-frame))
   (try
     (when @call-frame
       (.leave ^js/DailyIframe.callFrame @call-frame)
@@ -83,10 +86,12 @@
         js/Object e (.error js/console "LEAVE CATCH e: " e))))
 
 (defn start-live-streaming [rtmp-full-url]
-  (.startLiveStreaming ^js/DailyIframe.callFrame @call-frame rtmp-full-url))
+  (js/console.log ::start-live-streaming "rtmp-full-url: " rtmp-full-url)
+  (.startLiveStreaming ^js/DailyIframe.callFrame @call-frame #js {:rtmpUrl rtmp-full-url}))
 
 (defn stop-live-streaming []
-  (.startLiveStreaming ^js/DailyIframe.callFrame @call-frame))
+  (js/console.log ::stop-live-streaming)
+  (.stopLiveStreaming ^js/DailyIframe.callFrame @call-frame))
 ;;
 ;; Event listener callbacks and helpers
 ;;

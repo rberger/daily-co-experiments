@@ -13,6 +13,15 @@
 (defsub :rtmp-session-key)
 
 (rf/reg-sub
+ :room-url-meeting-token
+ :<- [:room-url]
+ :<- [:meeting-token]
+ (fn [[room-url meeting-token]]
+   (if meeting-token
+     (str room-url "?t=" meeting-token)
+     room-url)))
+
+(rf/reg-sub
  :rtmp-full-url
  ;; input signals with syntactic sugar as per
  ;; https://day8.github.io/re-frame/subscriptions/#syntactic-sugar
@@ -20,7 +29,10 @@
  :<- [:rtmp-session-key]
 
  (fn [[rtmp-url rtmp-session-key] _]
-   (str rtmp-url "/" rtmp-session-key)))
+   (js/console.log "!!!!!! rtmp-url: " rtmp-url " rtmp-session-key: " rtmp-session-key)
+   (if (and rtmp-url rtmp-session-key)
+     (str rtmp-url "/" rtmp-session-key)
+     nil)))
 
 
 (defsub :status-description)
